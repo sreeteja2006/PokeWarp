@@ -30,16 +30,13 @@ export default function Banner() {
       return
     }
 
-    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, { signal: controller.signal })
-      .then((r) => r.json())
-      .then((data) => {
-        const pokemon = {
-          id,
-          name: data.name,
-          type: data.types[0].type.name,
-          sprite: data.sprites.other['official-artwork'].front_default,
-        }
-        cacheResult(id, pokemon)
+    fetch(`http://localhost:8080/warp`, { signal: controller.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error('Warp failed on server')
+        return r.json()
+      })
+      .then((pokemon) => {
+        cacheResult(pokemon.id, pokemon)
         addPokemon(pokemon)
         setPulled(pokemon)
         setIsWarping(false)
